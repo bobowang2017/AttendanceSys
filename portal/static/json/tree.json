@@ -1,0 +1,149 @@
+{
+  "customer_tree": [
+    {
+      "text": "系统导航",
+      "iconCls": "icon-navigation",
+      "children": [
+        {
+          "text": "用户管理",
+          "checked": "true",
+          "iconCls": "icon-userManage",
+          "children": [
+            {
+              "text": "用户列表",
+              "iconCls": "icon-users",
+              "attributes": {
+                "url": "/static/html/user/user.html"
+              }
+            }
+          ]
+        },
+        {
+          "text": "考勤管理",
+          "iconCls": "icon-manage",
+          "checked": "true",
+          "children": [
+            {
+              "text": "考勤记录",
+              "iconCls": "icon-attendance",
+              "attributes": {
+                "url": "user/user.html"
+              }
+            },
+            {
+              "text": "办公申请",
+              "iconCls": "icon-apply",
+              "attributes": {
+                "url": "user/user.html"
+              }
+            }
+          ]
+        },
+        {
+          "text": "邮件管理",
+          "iconCls": "icon-email",
+          "checked": "true",
+          "children": [
+            {
+              "text": "写邮件",
+              "iconCls": "icon-email-edit",
+              "attributes": {
+                "url": "/static/html/email/edit_email.html"
+              }
+            },
+            {
+              "text": "发件箱",
+              "iconCls": "icon-email-outbox",
+              "attributes": {
+                "url": "/static/html/email/out_email.html"
+              }
+            },
+            {
+              "text": "收件箱",
+              "iconCls": "icon-email-inbox",
+              "attributes": {
+                "url": "/static/html/email/in_email.html"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "manager_tree": [
+    {
+      "text": "系统导航",
+      "iconCls": "icon-navigation",
+      "children": [
+        {
+          "text": "用户管理",
+          "iconCls": "icon-userManage",
+          "checked": "true",
+          "children": [
+            {
+              "text": "用户列表",
+              "iconCls": "icon-users",
+              "attributes": {
+                "url": "user/user.html"
+              }
+            }
+          ]
+        },
+        {
+          "text": "考勤管理",
+          "iconCls": "icon-manage",
+          "checked": "true",
+          "children": [
+            {
+              "text": "审批管理",
+              "iconCls": "icon-approval",
+              "attributes": {
+                "url": "user/user.html"
+              }
+            }
+          ]
+        },
+        {
+          "text": "邮件管理",
+          "iconCls": "icon-email",
+          "checked": "true",
+          "children": [
+            {
+              "text": "写邮件",
+              "iconCls": "icon-email-edit",
+              "attributes": {
+                "url": "/static/html/email/edit_email.html"
+              }
+            },
+            {
+              "text": "发件箱",
+              "iconCls": "icon-email-outbox",
+              "attributes": {
+                "url": "/static/html/email/out_email.html"
+              }
+            },
+            {
+              "text": "收件箱",
+              "iconCls": "icon-email-inbox",
+              "attributes": {
+                "url": "/static/html/email/in_email.html"
+              }
+            }
+          ]
+        },
+        {
+          "text": "公告管理",
+          "checked": "true",
+          "children": [
+            {
+              "text": "公告列表",
+              "attributes": {
+                "url": "user/user.html"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

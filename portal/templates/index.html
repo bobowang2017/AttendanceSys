@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XXX公司考勤管理系统</title>
+</head>
+
+<link rel="stylesheet" type="text/css" href="../static/jquery-easyui/themes/metro-gray/easyui.css">
+<link rel="stylesheet" type="text/css" href="../static/jquery-easyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="../static/jquery-easyui/demo/demo.css">
+<script type="text/javascript" src="../static/jquery-easyui/jquery.min.js"></script>
+<script type="text/javascript" src="../static/jquery-easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../static/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
+<link rel="stylesheet" href="../static/jquery-easyui/kindeditor/themes/default/default.css" />
+<link rel="stylesheet" href="../static/jquery-easyui/kindeditor/plugins/code/prettify.css" />
+<script charset="utf-8" src="../static/jquery-easyui/kindeditor/kindeditor.js"></script>
+<script charset="utf-8" src="../static/jquery-easyui/kindeditor/lang/zh_CN.js"></script>
+<script charset="utf-8" src="../static/jquery-easyui/kindeditor/plugins/code/prettify.js"></script>
+<script >
+    $.fn.datebox.defaults.formatter = function(date){
+        console.log(date);
+        var y = date.getFullYear();
+        var m = date.getMonth()+1;
+        var d = date.getDate();
+        return y+'-'+m+'-'+d;
+    }
+$(function() {
+    <!-- 加载主页面内容 -->
+    $("#center").panel({
+        title:'系统首页',
+{#        href:'main.jsp'#}
+    });
+    <!-- 加载主页面导航树 -->
+    $("#tree_view").tree({
+        url: 'v1/user/url',
+        method: 'get',
+        lines: true,
+        animate: true,
+        loadFilter: function (data) {
+            var result= $.parseJSON(data);
+            console.log(result);
+            if (result.ret_code!=0){
+                $.messager.alert({
+                    title:'温馨提示',
+                    msg:'用户导航树加载异常'
+                });
+            }else {
+                return result.data;
+            }
+        },
+        onSelect:function(){
+            var node=$("#tree_view").tree('getSelected');
+            console.log(node);
+            if(node['attributes']){
+                $("#center").panel({
+                    title:node.text,
+                    href:node.attributes.url
+                });
+            }
+        }
+    })
+})
+</script>
+<body class="easyui-layout">
+<div data-options="region:'north',split:true" style="height:60px;padding:10px;background-color: #c7ccd1"></div>
+<div data-options="region:'west',split:true,title:'当前用户：zhangsan'" style="width:18%;padding:10px; background-color: #c7ccd1">
+    <ul class="easyui-tree" id="tree_view"></ul>
+</div>
+<div data-options="region:'east',split:true,title:'East',collapsible:true" style="width:15%;padding:10px;background-color: #c7ccd1"></div>
+<div data-options="region:'south',split:true" style="height:50px;padding:10px;background-color: #c7ccd1;"></div>
+<div id="center" data-options="region:'center',title:'Center'" style="text-align: center;background-color: #c7ccd1"></div>
+</body>
+</html>

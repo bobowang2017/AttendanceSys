@@ -1,0 +1,100 @@
+<script>
+    function send_email(){
+        var receiver_list = $("#receiver").val();
+        var header = $("#header").val();
+        //var content = $(".ke-content").html();
+        //console.log( $(".ke-content").text());
+        var content = 'Dear, I want to make friend with you';
+        var error_message = '';
+        var error_tag = true;
+        if (receiver_list == ''){
+            error_message = '请填写收件人地址';
+            error_tag = false;
+        }
+        if (header == ''){
+            error_message = '请填邮件主题';
+            error_tag = false;
+        }
+        if (content == ''){
+            error_message = '请填写收件内容';
+            error_tag = false;
+        }
+        if (error_tag == false){
+            $.messager.alert({
+                title: '温馨提示',
+                msg: error_message
+            });
+            return
+        }
+        var data = {'receiver_list': receiver_list, 'header':header, 'content':content}
+        $.ajax({
+            url: 'v1/email',
+            type: 'post',
+            contentType:'application/json',
+            data: JSON.stringify(data),
+            success: function (data) {
+                data = $.parseJSON(data);
+                if (data.ret_code == 0) {
+                    // $("#receiver").val('');
+                    // $("#header").val('');
+                    $.messager.show({
+                        title: '温馨提示',
+                        msg: '邮件发送成功',
+                        timeout: 5000
+                    });
+                }
+                else {
+                    var message = '邮件发送失败';
+                    if(data.data.indexOf('Mailbox not found or access denied') != -1)
+                        message = '对方邮件地址有误';
+                    $.messager.show({
+                        title: '温馨提示',
+                        msg: message,
+                        timeout: 5000
+                    });
+                }
+            }
+        });
+    }
+    $(function () {
+        window.editor = KindEditor.create('#content',{
+                  resizeType:1,
+                  urlType:'domain', // 带有域名的绝对路径
+        });
+    });
+
+</script>
+<style>
+    table{
+        min-width: 700px;
+    }
+    table #receiver, #header{
+        width: 635px;
+    }
+</style>
+<div style="width: 100%; margin-left: auto;margin-right: auto;margin-top: 10px;text-align: center; min-width: 800px">
+    <table>
+        <tr>
+            <td  width="15%" align="right">收件人：</td>
+            <td width="85%"><input  id="receiver" class="easyui-textbox" data-options="prompt:'请选择收件人...',validType:'email'"></td>
+        </tr>
+        <tr>
+            <td align="right">主题：</td>
+            <td><input  id="header" class="easyui-textbox" data-options="prompt:'请输入邮件主题...'"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td width="85%">
+                <textarea id="content" name="content"  style="height:300px;"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-email-sender'" onclick="send_email()">发送邮件</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'">清空邮件</a>
+            </td>
+        </tr>
+    </table>
+
+</div>

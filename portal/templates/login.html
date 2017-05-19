@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XXX公司考勤管理系统</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        table tr {
+            height: 30px;
+            font-size: 16px;
+        }
+    </style>
+    <script>
+        function user_login() {
+            user_id = $('#user_id').val();
+            user_password = $('#user_password').val();
+            if (user_id == null || user_id == '' || user_password == null || user_password == '') {
+                $.messager.alert({
+                    title: '温馨提示',
+                    msg: '用户名或密码为空'
+                });
+                return
+            }
+            param = {
+                'user_id': $("#user_id").val(),
+                'user_password': $("#user_password").val()
+            };
+            console.log(param);
+            $.ajax({
+                url: 'password',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(param),
+                success: function (data) {
+                    data = $.parseJSON(data);
+                    if (data.ret_code == 0) {
+                        $.messager.show({
+                            title: '温馨提示',
+                            msg: '添加用户成功',
+                            timeout: 5000
+                        });
+                    }
+                    else {
+                        $.messager.show({
+                            title: '温馨提示',
+                            msg: '添加用户失败',
+                            timeout: 5000
+                        });
+                    }
+                }
+            });
+        }
+
+    </script>
+</head>
+
+<link rel="stylesheet" type="text/css" href="../static/jquery-easyui/themes/metro-gray/easyui.css">
+<link rel="stylesheet" type="text/css" href="../static/jquery-easyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="../static/jquery-easyui/demo/demo.css">
+<script type="text/javascript" src="../static/jquery-easyui/jquery.min.js"></script>
+<script type="text/javascript" src="../static/jquery-easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../static/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
+
+
+<body>
+<div class="easyui-window" data-options="iconCls:'icon-user',title:'系统登录',collapsible: false, minimizable:false,
+    maximizable:false, closable:false" style="margin-left: auto;margin-right: auto; border: 1px solid silver;
+    width: 400px; height: 210px">
+    <table style="margin-top: 30px">
+        <tr>
+            <td align="right" width="100px">用户名：</td>
+            <td align="left"><input id="user_id" style="border: 1px solid silver"/></td>
+        </tr>
+        <tr>
+            <td align="right">密&nbsp;&nbsp;码：</td>
+            <td align="left"><input id="user_password" type="password" style="border: 1px solid silver"/></td>
+        </tr>
+        <tr>
+            <td align="center" colspan="2" style="height: 40px;">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="user_login()" style="width:80px">登录</a>
+                &nbsp;&nbsp;
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onclick="add_user_form()"
+                   style="width:80px">取消</a>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

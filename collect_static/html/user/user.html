@@ -1,0 +1,336 @@
+<script>
+    function sex_format(val) {
+        if (val == true) {
+            return '男'
+        } else {
+            return '女'
+        }
+    }
+    function status_format(val) {
+        if (val == 0) {
+            return '正常'
+        } else if (val == -1) {
+            return '禁用'
+        } else {
+            return '过时'
+        }
+    }
+    function do_search() {
+        $('#user_list').datagrid('load', {
+            user_number: $('#user_number').val(),
+            user_name: $('#user_name').val(),
+            user_phone: $('#user_phone').val()
+        });
+    }
+    function add_user(){
+        $('#add_user_div').window('open');
+    }
+    function cancel_add_user(){
+        $("#add_user_form").form('clear');
+        $('#add_user_div').window('close');
+    }
+    function add_user_form(){
+        if($("#add_user_form").form("validate")) {
+            param = {
+                    'user_name': $("#user_name_f").val(),
+                    'user_sex': $("input[type='radio']:checked").val(),
+                    'user_birthday': $("#user_birthday_f").val(),
+                    'user_email': $("#user_email_f").val(),
+                    'user_phone': $("#user_phone_f").val(),
+                    'user_address': $("#user_address_f").val()
+            };
+            console.log(param);
+            $.ajax({
+                url: 'v1/user',
+                type: 'post',
+                contentType:'application/json',
+                data: JSON.stringify(param),
+                success: function (data) {
+                    data = $.parseJSON(data);
+                    $('#user_list').datagrid('reload');
+                    $("#add_user_div").window('close');
+                    if (data.ret_code == 0) {
+                        $.messager.show({
+                            title: '温馨提示',
+                            msg: '添加用户成功',
+                            timeout: 5000
+                        });
+                    }
+                    else {
+                        $.messager.show({
+                            title: '温馨提示',
+                            msg: '添加用户失败',
+                            timeout: 5000
+                        });
+                    }
+                }
+            });
+        }
+    }
+    function update_user(){
+        var rows = $('#user_list').datagrid('getSelections');
+        if (rows.length!=1){
+            $.messager.alert({
+                title: '温馨提示',
+                msg: '请选择一个用户进行修改'
+            });
+            return
+        }
+        user_info = rows[0];
+        console.log(user_info);
+        $("#update_user_form").form('clear');
+        $('#update_user_id').val(user_info['user_id']);
+        $('#update_user_name').val(user_info['user_name']);
+        $('#update_user_birthday').val(user_info['user_birthday']);
+        $('#update_user_email').val(user_info['user_email']);
+        $('#update_user_address').val(user_info['user_address']);
+        $('#update_user_phone').val(user_info['user_phone']);
+        $('#update_user_div').window('open');
+    }
+    function update_user_form(){
+        if($("#update_user_form").form("validate")) {
+            param = {
+                'user_id': $("#update_user_id").val(),
+                'user_name': $("#update_user_name").val(),
+                'user_sex': $("input[type='radio']:checked").val(),
+                'user_birthday': '1989-09-15',
+                'user_email': $("#update_user_email").val(),
+                'user_phone': $("#update_user_phone").val(),
+                'user_address': $("#update_user_address").val()
+            };
+            console.log(param);
+            $.ajax({
+                url: 'v1/user',
+                type: 'put',
+                contentType:'application/json',
+                data: JSON.stringify(param),
+                success: function (data) {
+                    data = $.parseJSON(data);
+                    $('#user_list').datagrid('reload');
+                    $("#update_user_div").window('close');
+                    $("#update_user_form").form('clear');
+                    if (data.ret_code == 0) {
+                        $.messager.show({
+                            title: '温馨提示',
+                            msg: '修改用户信息成功',
+                            timeout: 5000
+                        });
+                    }
+                    else {
+                        $.messager.show({
+                            title: '温馨提示',
+                            msg: '修改用户信息失败',
+                            timeout: 5000
+                        });
+                    }
+                }
+            });
+        }
+    }
+    function cancel_update_user(){
+        $('#update_user_div').window('close');
+    }
+    function delete_user(){
+        var rows = $('#user_list').datagrid('getSelections');
+        if (rows.length == 0){
+            $.messager.alert({
+                title: '温馨提示',
+                msg: '请选择一个或多个用户'
+            });
+            return
+        }
+        $.messager.confirm('温馨提示','确定删除选中记录？',function(r){
+            if(r){
+                id_list = '';
+                $.each(rows, function(index, row){
+                    id_list = id_list + row['user_id'] + ',';
+                });
+                $.ajax({
+                        url: 'v1/user',
+                        type: 'delete',
+                        contentType:'application/json',
+                        data: JSON.stringify({'ids':id_list}),
+                        success: function (data) {
+                            data = $.parseJSON(data);
+                            if (data.ret_code == 0) {
+                                $('#user_list').datagrid('reload');
+                                $.messager.show({
+                                    title: '温馨提示',
+                                    msg: '删除用户成功',
+                                    timeout: 5000
+                                });
+                            }
+                            else {
+                                $.messager.show({
+                                    title: '温馨提示',
+                                    msg: '删除用户失败',
+                                    timeout: 5000
+                                });
+                            }
+                        }
+                });
+        }})
+
+    }
+    $(function () {
+        $('#user_list').datagrid({
+            url: 'v1/user',
+            method: 'get',
+            loadFilter: function (data) {
+                var result = $.parseJSON(data);
+                console.log(result);
+                if (result.ret_code != 0) {
+                    $.messager.alert({
+                        title: '温馨提示',
+                        msg: '用户列表加载异常'
+                    });
+                } else {
+                    return result.data
+                }
+            },
+            striped: true,
+            fitColumns: true,
+            pagination: true,
+            pageSize: 10,
+            rownumbers: false,
+            pageList: [10, 20],
+            toolbar: "#user_toolbar"
+        })
+    });
+
+</script>
+<style>
+    #add_user_div table tr{
+        height: 26px;
+        font-size: 14px;
+    }
+</style>
+<div style="width: 95%; margin-left: auto;margin-right: auto;margin-top: 10px;text-align: center;">
+    <table id="user_list" style="width:100%;margin-left: auto;margin-right: auto;min-width: 800px">
+        <thead>
+        <tr>
+            <th width="9%" align="center" data-options="field:'user_number',resizable:false">编号</th>
+            <th width="10%" align="center" data-options="field:'user_name',resizable:false">姓名</th>
+            <th width="6%" formatter="sex_format" align="center" data-options="field:'user_sex',resizable:false">性别</th>
+            <th width="15%" align="center" data-options="field:'user_birthday',resizable:false">出生日期</th>
+            <th width="18%" align="center" data-options="field:'user_email',resizable:false">邮箱</th>
+            <th width="12%" align="center" data-options="field:'user_phone',resizable:false">手机号码</th>
+            <th width="20%" align="center" data-options="field:'register_time',resizable:false">注册时间</th>
+            <th width="10%" align="center" formatter="status_format" data-options="field:'user_status',resizable:false">
+                当前状态
+            </th>
+        </tr>
+        </thead>
+    </table>
+    <div id="user_toolbar" style="padding:3px">
+        <span>编号:</span>
+        <input id="user_number" style="line-height:20px;border:1px solid silver; width: 100px">
+        <span>姓名:</span>
+        <input id="user_name" style="line-height:20px;border:1px solid silver; width: 100px">
+        <span>手机号码:</span>
+        <input id="user_phone" style="line-height:20px;border:1px solid silver; width: 100px">
+        <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="do_search()">查询</a>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="add_user()">添加</a>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delete_user()">删除</a>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="update_user()">修改</a>
+    </div>
+</div>
+
+<div id="add_user_div" class="easyui-window" title="添加用户信息" data-options="iconCls:'icon-user',closed: true,
+        collapsible:false,minimizable: false, maximizable:false" style="width: 500px;height: 300px; margin-left: auto;
+        margin-right: auto; text-align: center">
+    <form id="add_user_form" method="post">
+        <table style="margin-left: auto; margin-right: auto;margin-top: 10px">
+        <tr>
+            <td align="right"><span>姓名：</span></td>
+            <td align="left"><input class="easyui-validatebox" type="text" id="user_name_f" required="true" style="border:1px solid silver; background-color: white"></td>
+            <td align="left" style="width: 90px"><span style="color: blue; font-size: 14px">&nbsp;*&nbsp;必填</span></td>
+        </tr>
+        <tr>
+            <td align="right"><span>性别：</span></td>
+            <td align="left"><input type="radio" checked name="user_sex_f" value="1">男<input type="radio" name="user_sex_f" value="0">女</td>
+            <td align="left"></td>
+        </tr>
+        <tr>
+            <td align="right"><span>出生日期：</span></td>
+            <td align="left"><input class="easyui-datebox" type="text" name="name" required="true"
+                                    style="border:1px solid silver; background-color: white; width: 180px;"
+                                    data-options="currentText:'今天', closeText:'关闭',editable:false"
+                                    id="user_birthday_f">
+            </td>
+            <td align="left"><span style="color: blue; font-size: 14px">&nbsp;*&nbsp;必填</span></td>
+        </tr>
+        <tr>
+            <td align="right"><span>邮箱：</span></td>
+            <td align="left"><input class="easyui-validatebox" type="text" id="user_email_f" required="true" style="border:1px solid silver;background-color: white"></td>
+            <td align="left"><span style="color: blue; font-size: 14px">&nbsp;*&nbsp;必填</span></td>
+        </tr>
+         <tr>
+            <td align="right"><span>家庭住址：</span></td>
+            <td align="left"><input  type="text" id="user_address_f"  style="border:1px solid silver;background-color: white"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="right"><span>手机号码：</span></td>
+            <td align="left"><input class="easyui-validatebox" type="text" id="user_phone_f" required="true" style="border:1px solid silver;background-color: white"></td>
+            <td align="left"><span style="color: blue; font-size: 14px">&nbsp;*&nbsp;必填</span></td>
+        </tr>
+        <tr style="height: 40px; line-height: 30px">
+            <td colspan="3" style="text-align: center;">
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'"  onclick="add_user_form()" style="width:80px">Ok</a>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"  onclick="cancel_add_user()" style="width:80px">Cancel</a>
+            </td>
+        </tr>
+    </table>
+    </form>
+</div>
+
+<div id="update_user_div" class="easyui-window" title="修改用户信息" data-options="iconCls:'icon-user',closed: true,
+        collapsible:false,minimizable: false, maximizable:false" style="width: 500px;height: 300px; margin-left: auto;
+        margin-right: auto; text-align: center">
+    <form id="update_user_form" method="post">
+        <table style="margin-left: auto; margin-right: auto;margin-top: 10px">
+            <input type="hidden" id="update_user_id">
+        <tr>
+            <td align="right"><span>姓名：</span></td>
+            <td align="left"><input class="easyui-validatebox" type="text" id="update_user_name" required="true" style="border:1px solid silver; background-color: white"></td>
+            <td align="left" style="width: 90px"><span style="color: blue; font-size: 14px">&nbsp;*&nbsp;必填</span></td>
+        </tr>
+        <tr>
+            <td align="right"><span>性别：</span></td>
+            <td align="left"><input type="radio" checked name="update_user_sex" value="1">男<input type="radio" name="update_user_sex" value="0">女</td>
+            <td align="left"></td>
+        </tr>
+        <tr>
+            <td align="right"><span>出生日期：</span></td>
+            <td align="left"><input class="easyui-datetimebox" type="text" name="name" required="true"
+                                    style="border:1px solid silver; background-color: white; width: 180px"
+                                    data-options="currentText:'今天', closeText:'关闭',editable:false"
+                                    id="update_user_birthday">
+            </td>
+            <td align="left"><span style="color: blue; font-size: 14px">&nbsp;*&nbsp;必填</span></td>
+        </tr>
+        <tr>
+            <td align="right"><span>邮箱：</span></td>
+            <td align="left"><input class="easyui-validatebox" type="text" id="update_user_email" required="true" style="border:1px solid silver;background-color: white"></td>
+            <td align="left"><span style="color: blue; font-size: 14px">&nbsp;*&nbsp;必填</span></td>
+        </tr>
+         <tr>
+            <td align="right"><span>家庭住址：</span></td>
+            <td align="left"><input  type="text" id="update_user_address"  style="border:1px solid silver;background-color: white"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="right"><span>手机号码：</span></td>
+            <td align="left"><input class="easyui-validatebox" type="text" id="update_user_phone" required="true" style="border:1px solid silver;background-color: white"></td>
+            <td align="left"><span style="color: blue; font-size: 14px">&nbsp;*&nbsp;必填</span></td>
+        </tr>
+        <tr style="height: 40px; line-height: 30px">
+            <td colspan="3" style="text-align: center;">
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'"  onclick="update_user_form()" style="width:80px">Ok</a>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"  onclick="cancel_update_user()" style="width:80px">Cancel</a>
+            </td>
+        </tr>
+    </table>
+    </form>
+</div>

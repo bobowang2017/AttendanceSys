@@ -1,0 +1,53 @@
+<script>
+    function do_search() {
+        $('#out_email_list').datagrid('load', {
+            email_receiver: $('#receiver').val(),
+            email_title: $('#title').val()
+        });
+    }
+    $(function () {
+        $('#out_email_list').datagrid({
+            url: 'v1/email',
+            method: 'get',
+            loadFilter: function (data) {
+                var result = $.parseJSON(data);
+                console.log(result);
+                if (result.ret_code != 0) {
+                    $.messager.alert({
+                        title: '温馨提示',
+                        msg: '收件箱列表加载异常'
+                    });
+                } else {
+                    return result.data
+                }
+            },
+            striped: true,
+            fitColumns: true,
+            pagination: true,
+            pageSize: 10,
+            rownumbers: false,
+            pageList: [10, 20],
+            toolbar: "#out_email_toolbar"
+        })
+    });
+
+</script>
+<div style="width: 95%; margin-left: auto;margin-right: auto;margin-top: 10px;text-align: center;">
+    <table id="out_email_list" style="width:100%;margin-left: auto;margin-right: auto;min-width: 800px">
+        <thead>
+        <tr>
+            <th width="15%" align="center" data-options="field:'email_receiver',resizable:false">收件人</th>
+            <th width="20%" align="center" data-options="field:'email_title',resizable:false">邮件主题</th>
+            <th width="45%" align="center" data-options="field:'email_content',resizable:false">邮件内容</th>
+            <th width="20%" align="center" data-options="field:'send_time',resizable:false">时间</th>
+        </tr>
+        </thead>
+    </table>
+    <div id="out_email_toolbar" style="padding:3px">
+        <span>收件人:</span>
+        <input id="receiver" style="line-height:20px;border:1px solid silver; width: 100px">
+        <span>主题:</span>
+        <input id="title" style="line-height:20px;border:1px solid silver; width: 100px">
+        <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="do_search()">查询</a>
+    </div>
+</div>
