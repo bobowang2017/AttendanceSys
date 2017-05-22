@@ -20,13 +20,9 @@ from user_app.views import OauthCallbackView, AuthView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^$', index_login),
-    url('^accounts/', admin.site.urls),
     url(r'^callback$', OauthCallbackView.as_view()),
     url(r'^v1/', include('user_app.urls')),
     url(r'^v1/', include('user_email.urls')),
     url(r'^password$', AuthView.as_view()),
-    # url(r'^v1/', include('apply_app.urls')),
-    # url(r'^v1/', include('attendance_app.urls')),
 ]
