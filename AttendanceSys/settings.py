@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'portal',
     'user_email',
     'middleware',
+    'test_app',
 ]
 
 MIDDLEWARE = [

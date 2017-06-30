@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^v1/', include('user_app.urls')),
     url(r'^v1/', include('user_email.urls')),
     url(r'^password$', AuthView.as_view()),
+    url(r'^test/', include('test_app.urls')),
 ]
