@@ -2,3 +2,4 @@ Django==1.11
 djangorestframework==3.6.2
 xlwt==1.2.0
 向master添加测试内容
+test dev
